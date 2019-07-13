@@ -36,6 +36,8 @@ public class AdvancedSearchBox extends JPanel implements ActionListener, ListSel
     private JScrollPane scrollPane;
     private HashMap<String, SearchResult> resultsForAllFiles;
     private String tooltipText;
+    // parameters to set are: no of lines before and after, location of the folder on the disk.
+    // TODO Features: select local dir (absolute path + test if sub-folders are read too), generate Youtube link (assume SRT filename is the name of the video).
  
     public AdvancedSearchBox() {
         super(new GridBagLayout());

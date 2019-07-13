@@ -9,7 +9,7 @@ import Model.LineFromAFile;
 import Model.SearchResult;
 
 public class Main {
-	private List<SearchResult> resultsForAllFiles;
+	private static List<SearchResult> resultsForAllFiles;
 	private HashMap<String, SearchResult> resultsMap;
 
 	public Main() {
@@ -39,13 +39,16 @@ public class Main {
 	}
 	public static void main (String[] args) {
 		Main main = new Main();
-		for (SearchResult searchResult : main.searchDirectory("soul")) {
-			System.out.println("Found " + searchResult.getResults().size() + " results in file " + searchResult.getFilename());
-			for (LineFromAFile result : searchResult.getResults()) {
-				System.out.println("-> Found at line: " + result.getLineNr() + ". Content: " + result.getLineStr());
-			}
-			System.out.println("-------------------");
-		}
+		SearchResult searchResult;
+        main.searchDirectory("plastic");
+//        for (String key : resultsMap.keySet()) {
+//			searchResult = resultsForAllFiles.get(key);
+//			System.out.println("Found " + searchResult.getResults().size() + " results in file " + searchResult.getFilename());
+//			for (LineFromAFile result : searchResult.getResults()) {
+//				System.out.println("-> Found at line: " + result.getLineNr() + ". Content: " + result.getLineStr());
+//			}
+//			System.out.println("-------------------");
+//		}
 	}
 
 }
