@@ -9,12 +9,12 @@ public class LineFromAFile {
 	private String start, finish, time;
 	
 	
-	public LineFromAFile(String nr, String time, String value) {
+	public void init(String nr, String time, String value) {
 		//System.out.println("Line nr is:"+ nr + ".");
 		this.lineNr = Integer.parseInt(cleanTextContent(nr));
 		this.time = time;
 		String tmp = cleanTextContent(value);
-		this.lineStr = tmp.substring(1, tmp.length()-1);
+		setLineStr(tmp.substring(1, tmp.length()-1));
 		//System.out.println(toString());
 	}
 	public String getTime() {
@@ -24,7 +24,10 @@ public class LineFromAFile {
 		this.time = time;
 	}
 	public LineFromAFile(String filename, ArrayList<String> singleLine) {
-		this(singleLine.get(0), singleLine.get(1), singleLine.subList(2, singleLine.size()).toString());
+		if (singleLine.size() < 3) {
+			return;
+		}
+		init (singleLine.get(0), singleLine.get(1), singleLine.subList(2, singleLine.size()).toString());
 		this.filename = filename;
 	}
 	
@@ -63,11 +66,14 @@ public class LineFromAFile {
 	}
 
 	public String getLineStr() {
+		if(lineStr == null) {
+			return "";
+		}
 		return lineStr;
 	}
 
 	public void setLineStr(String lineStr) {
-		this.lineStr = lineStr;
+		this.lineStr = lineStr.replaceAll("\\<[^>]*>","");
 	}
 
 	public LineFromAFile() {

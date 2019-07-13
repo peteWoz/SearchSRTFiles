@@ -30,6 +30,9 @@ public class SearchResult {
 	
 	private void filterFileContent(){
 		for (LineFromAFile lineFromAFile : fileLines) {
+			if(lineFromAFile == null || lineFromAFile.getLineStr() == null) {
+				continue;
+			}
 			if(lineFromAFile.getLineStr().contains(searchTerm)) {
 				results.add(lineFromAFile);
 			}

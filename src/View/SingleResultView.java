@@ -159,7 +159,8 @@ public class SingleResultView extends JPanel implements ActionListener{
 	        //creating and showing this application's GUI.
 	        javax.swing.SwingUtilities.invokeLater(new Runnable() {
 	            public void run() {
-	            	LineFromAFile f = new LineFromAFile("100", "00:58:29,180 --> 00:58:31,160", "soul of the man leaves the physicality");
+	            	LineFromAFile f = new LineFromAFile();
+	            	f.init("100", "00:58:29,180 --> 00:58:31,160", "soul of the man leaves the physicality");
 	            	f.setFilename("262nd KSW from 0_50_10 to 3_03_00.srt");
 	                createAndShowGUI(f, null, "abc");
 	            }
