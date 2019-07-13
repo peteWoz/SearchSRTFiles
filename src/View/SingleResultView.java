@@ -97,6 +97,7 @@ public class SingleResultView extends JPanel implements ActionListener{
         //Add Components to this panel.
         GridBagConstraints c = new GridBagConstraints();
         c.gridwidth = GridBagConstraints.REMAINDER;
+        
  
         c.fill = GridBagConstraints.HORIZONTAL;
 
