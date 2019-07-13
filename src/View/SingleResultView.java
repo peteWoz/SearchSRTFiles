@@ -18,6 +18,7 @@ import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -41,14 +42,15 @@ public class SingleResultView extends JPanel implements ActionListener{
     private static SearchResult wholeFile;
     private List<LineFromAFile> rangeOfLines;
     private int factor = 10;
-    protected JTextArea textArea;
+    protected JEditorPane textArea;
+    
     private JButton copy;
     private StringBuffer buffer;
     
     public SingleResultView() {}
     
     
-	public SingleResultView(LineFromAFile foundLine) {
+	public SingleResultView(LineFromAFile foundLine, String searchTerm) {
 		super(new GridBagLayout());
 		this.setPreferredSize(new Dimension(800,700));
 		this.foundLine = foundLine;
@@ -57,11 +59,22 @@ public class SingleResultView extends JPanel implements ActionListener{
 		int lowerIndex = Math.max(0, lineNr-factor);
 		int upperIndex = Math.min(lineNr+factor, wholeFile.getFileLines().size()-1);
 		rangeOfLines = wholeFile.getFileLines().subList(lowerIndex, upperIndex);
+		int indexOfSearchedWord;
+		String text = "";
 		
 		buffer = new StringBuffer();
 		for (LineFromAFile lineFromAFile : rangeOfLines) {
 			listModel.addElement(lineFromAFile);
-			buffer.append(lineFromAFile.getLineStr() + "\n");
+			if(foundLine == lineFromAFile) {
+				text = lineFromAFile.getLineStr();
+				indexOfSearchedWord = text.indexOf(searchTerm);
+				buffer.append(text.substring(0, indexOfSearchedWord));
+				buffer.append("<font color=\"red\"><b>" + searchTerm + "</b></font>");
+				buffer.append(text.substring(indexOfSearchedWord + searchTerm.length()) + "\n");
+			
+			}else {
+				buffer.append(lineFromAFile.getLineStr() + "\n");
+			}
 			System.out.println("Line added to resultsView" + lineFromAFile);
 		}
 	
@@ -74,7 +87,7 @@ public class SingleResultView extends JPanel implements ActionListener{
         JScrollPane scrollPane = new JScrollPane(list);
         //scrollPane.setPreferredSize(new Dimension(600, 600));
         //textArea = new JTextArea (50, 30);
-        textArea = new JTextArea ();
+        textArea = new JEditorPane("text/html", "");
         textArea.setEditable(false);
         textArea.setText(buffer.toString());
         JScrollPane scrollPaneBottom = new JScrollPane(textArea);
@@ -125,13 +138,13 @@ public class SingleResultView extends JPanel implements ActionListener{
 		
 	}
 	
-	 protected static void createAndShowGUI(LineFromAFile arg, SearchResult result) {
+	 protected static void createAndShowGUI(LineFromAFile arg, SearchResult result, String searchTerm) {
 	        //Create and set up the window.
 	        JFrame frame = new JFrame("Search Result");
 	        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	        wholeFile = result;
 	        //Create and set up the content pane.
-	        JComponent newContentPane = new SingleResultView(arg);
+	        JComponent newContentPane = new SingleResultView(arg, searchTerm);
 	        newContentPane.setOpaque(true); //content panes must be opaque
 	        frame.setContentPane(newContentPane);
 	 
@@ -147,7 +160,7 @@ public class SingleResultView extends JPanel implements ActionListener{
 	            public void run() {
 	            	LineFromAFile f = new LineFromAFile("100", "00:58:29,180 --> 00:58:31,160", "soul of the man leaves the physicality");
 	            	f.setFilename("262nd KSW from 0_50_10 to 3_03_00.srt");
-	                createAndShowGUI(f, null);
+	                createAndShowGUI(f, null, "abc");
 	            }
 	        });
 	    }

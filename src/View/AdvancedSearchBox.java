@@ -35,7 +35,7 @@ public class AdvancedSearchBox extends JPanel implements ActionListener, ListSel
     private DefaultListModel<LineFromAFile> listModel;
     private JScrollPane scrollPane;
     private HashMap<String, SearchResult> resultsForAllFiles;
-    private String tooltipText;
+    private String tooltipText, searchTerm;
     // parameters to set are: no of lines before and after, location of the folder on the disk.
     // TODO Features: select local dir (absolute path + test if sub-folders are read too), generate Youtube link (assume SRT filename is the name of the video).
  
@@ -56,7 +56,7 @@ public class AdvancedSearchBox extends JPanel implements ActionListener, ListSel
                     int index = list.locationToIndex(evt.getPoint());
                     javax.swing.SwingUtilities.invokeLater(new Runnable() {
         	            public void run() {
-        	                SingleResultView.createAndShowGUI(lineFromAFile, resultsForAllFiles.get(lineFromAFile.getFilename()));
+        	                SingleResultView.createAndShowGUI(lineFromAFile, resultsForAllFiles.get(lineFromAFile.getFilename()), searchTerm);
         	            }
         	        });
                 } 
@@ -127,15 +127,15 @@ public class AdvancedSearchBox extends JPanel implements ActionListener, ListSel
     	if(evt.getSource() == searchButton || evt.getSource() == textField) {
     		tooltipText = "<html>";
     		//listModel.clear();
-	        String text = textField.getText();
+	        searchTerm = textField.getText();
 	        textField.setText("");
 	        textField.selectAll();
-	        System.out.println("Filetype: " + fileType.getSelectedItem() + ". searchTerm: " + text);
+	        System.out.println("Filetype: " + fileType.getSelectedItem() + ". searchTerm: " + searchTerm);
 	        
 	        //call the controller and get info back in
 	        Main main = new Main();
 	        SearchResult searchResult;
-	        resultsForAllFiles = main.searchDirectory(text);
+	        resultsForAllFiles = main.searchDirectory(searchTerm);
 	        for (String key : resultsForAllFiles.keySet()) {
 	        	searchResult = resultsForAllFiles.get(key);
 				System.out.println("Found " + searchResult.getResults().size() + " results in file " + searchResult.getFilename());
@@ -145,6 +145,7 @@ public class AdvancedSearchBox extends JPanel implements ActionListener, ListSel
 				for (LineFromAFile result : searchResult.getResults()) {
 					System.out.println("-> Found at line: " + result.getLineNr() + ". Content: " + result.getLineStr());
 					//textArea.append("-> Found at line: " + result.getLineNr() + ", " + result.getTime() + ". Content: " + result.getLineStr() + newline);
+					
 					listModel.addElement(result);
 				}
 				System.out.println("-------------------");
@@ -156,7 +157,7 @@ public class AdvancedSearchBox extends JPanel implements ActionListener, ListSel
 				//listModel.addElement("   ");
 			}
 	        tooltipText = tooltipText + "</html>";
-	        noOfFiles.setText("Your search for '" + text + "' returned " + totalResults + " results in " + numberOfFilesWithResults + " files.");
+	        noOfFiles.setText("Your search for '" + searchTerm + "' returned " + totalResults + " results in " + numberOfFilesWithResults + " files.");
 	        noOfFiles.setToolTipText(tooltipText);
 	        //textArea.append(text + newline);
 	        //Make sure the new text is visible, even if there
