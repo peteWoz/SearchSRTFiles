@@ -127,11 +127,12 @@ public class SingleResultView extends JPanel implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		//put the content of the buffer into the clipboard and replace all the HTML markup used before on it for changing the font color/face.
 		if(e.getSource() == copy) {
 			Toolkit.getDefaultToolkit()
 	        .getSystemClipboard()
 	        .setContents(
-	                new StringSelection(buffer.toString()),
+	                new StringSelection(buffer.toString().replaceAll("\\<[^>]*>","")),
 	                null
 	        );
 		}
