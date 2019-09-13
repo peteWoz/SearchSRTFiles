@@ -33,7 +33,7 @@ public class LineFromAFile {
 	
 	@Override
 	public String toString() {
-		return "Index = " + lineNr + ", time=" + time + ", text=" + lineStr;
+		return "Index = " + lineNr + ", " + time + " | " + lineStr;
 	}
 	//clean all the non-printable caracters
 	private static String cleanTextContent(String text){

@@ -59,7 +59,31 @@ public class AdvancedSearchBox extends JPanel implements ActionListener, ListSel
         	                SingleResultView.createAndShowGUI(lineFromAFile, resultsForAllFiles.get(lineFromAFile.getFilename()), searchTerm);
         	            }
         	        });
-                } 
+                }else if(evt.getClickCount() == 1) {
+	                LineFromAFile lineFromAFile = (LineFromAFile)list.getSelectedValue();
+	                int index = list.locationToIndex(evt.getPoint());
+	                if( index>-1 ) {
+	                    list.setToolTipText(lineFromAFile.getFilename());
+	                }
+                }
+            }
+        });
+
+        list.addMouseMotionListener(new MouseMotionListener() {
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                // no-op
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                JList l = (JList) e.getSource();
+                DefaultListModel<LineFromAFile> m = (DefaultListModel<LineFromAFile>) l.getModel();
+                int index = l.locationToIndex(e.getPoint());
+                if (index > -1) {
+                    l.setToolTipText(m.getElementAt(index).getFilename());
+                }
             }
         });
         //list.setVisibleRowCount(5);
@@ -156,6 +180,7 @@ public class AdvancedSearchBox extends JPanel implements ActionListener, ListSel
 				//textArea.append(newline);
 				//listModel.addElement("   ");
 			}
+
 	        tooltipText = tooltipText + "</html>";
 	        noOfFiles.setText("Your search for '" + searchTerm + "' returned " + totalResults + " results in " + numberOfFilesWithResults + " files.");
 	        noOfFiles.setToolTipText(tooltipText);

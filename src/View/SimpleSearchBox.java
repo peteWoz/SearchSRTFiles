@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -16,6 +17,8 @@ import javax.swing.*;
 import Controller.Main;
 import Model.LineFromAFile;
 import Model.SearchResult;
+import static java.util.Comparator.comparingInt;
+
  
 public class SimpleSearchBox extends JPanel implements ActionListener {
     protected JTextField textField;
@@ -28,6 +31,7 @@ public class SimpleSearchBox extends JPanel implements ActionListener {
     private String[] fileTypes = {"SRT"};
     private JTextPane tPane;
     private HashMap<String, SearchResult> resultsForAllFiles;
+    
  
     public SimpleSearchBox() {
         super(new GridBagLayout());

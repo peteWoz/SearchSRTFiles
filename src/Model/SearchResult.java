@@ -33,7 +33,7 @@ public class SearchResult {
 			if(lineFromAFile == null || lineFromAFile.getLineStr() == null) {
 				continue;
 			}
-			if(lineFromAFile.getLineStr().contains(searchTerm)) {
+			if(lineFromAFile.getLineStr().toLowerCase().contains(searchTerm.toLowerCase())) {
 				results.add(lineFromAFile);
 			}
 		}
