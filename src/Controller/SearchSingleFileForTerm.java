@@ -49,7 +49,7 @@ public class SearchSingleFileForTerm {
 		if (lines.size() > 1) {
 		  items.add(new LineFromAFile(filename, lines));
 		}
-		
+		System.out.println("It is: " + items.get(items.size()-1).getLineStr());
 		/*
 		while(file.hasNextLine()){
 			String line = file.nextLine();

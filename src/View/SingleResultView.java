@@ -67,9 +67,9 @@ public class SingleResultView extends JPanel implements ActionListener{
 			listModel.addElement(lineFromAFile);
 			if(foundLine == lineFromAFile) {
 				text = lineFromAFile.getLineStr();
-				indexOfSearchedWord = text.indexOf(searchTerm);
+				indexOfSearchedWord = text.toLowerCase().indexOf(searchTerm.toLowerCase());
 				buffer.append(text.substring(0, indexOfSearchedWord));
-				buffer.append("<font color=\"red\"><b>" + searchTerm + "</b></font>");
+				buffer.append("<font color=\"red\"><b>" + text.substring(indexOfSearchedWord, indexOfSearchedWord + searchTerm.length()) + "</b></font>");
 				buffer.append(text.substring(indexOfSearchedWord + searchTerm.length()) + "\n");
 			
 			}else {
