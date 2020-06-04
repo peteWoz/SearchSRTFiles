@@ -11,8 +11,10 @@ import Model.SearchResult;
 public class Main {
 	private static List<SearchResult> resultsForAllFiles;
 	private HashMap<String, SearchResult> resultsMap;
+	private String searchDir;
 
-	public Main() {
+	public Main(String searchDir) {
+		this.searchDir = searchDir;
 		resultsForAllFiles = new ArrayList<SearchResult>();
 	}
 	
@@ -22,7 +24,7 @@ public class Main {
 		BrowseResourceDirectory brd = new BrowseResourceDirectory();
 		resultsMap = new HashMap<String, SearchResult>();
 		try {
-			for (String filename : brd.getResourceFiles("/", "srt")) {
+			for (String filename : brd.getResourceFiles(searchDir, "srt")) {
 				System.out.println(filename);
 				ssf = new SearchSingleFileForTerm();
 				result = new SearchResult(filename, searchTerm, ssf.readWholeFile(filename));
@@ -38,7 +40,7 @@ public class Main {
 		return resultsMap;
 	}
 	public static void main (String[] args) {
-		Main main = new Main();
+		Main main = new Main("/");
 		SearchResult searchResult;
         main.searchDirectory("plastic");
 //        for (String key : resultsMap.keySet()) {

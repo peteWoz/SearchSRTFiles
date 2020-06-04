@@ -9,8 +9,9 @@ public class LineFromAFile {
 	private String start, finish, time;
 	
 	
-	public void init(String nr, String time, String value) {
-		//System.out.println("Line nr is:"+ nr + ".");
+	public void init(String nr, String time, String value) throws java.lang.NumberFormatException{
+		System.out.println("Line nr is:"+ nr + ".");
+		System.out.println("Parsing: " + cleanTextContent(nr));
 		this.lineNr = Integer.parseInt(cleanTextContent(nr));
 		this.time = time;
 		String tmp = cleanTextContent(value);
@@ -27,7 +28,12 @@ public class LineFromAFile {
 		if (singleLine.size() < 3) {
 			return;
 		}
+		try {
 		init (singleLine.get(0), singleLine.get(1), singleLine.subList(2, singleLine.size()).toString());
+		} catch (Exception e) {
+			//TODO: List files that are broken
+			return;
+		}
 		this.filename = filename;
 	}
 	

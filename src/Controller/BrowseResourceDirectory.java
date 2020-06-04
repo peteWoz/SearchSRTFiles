@@ -6,31 +6,52 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class BrowseResourceDirectory {
 
 	private List<String> filenames;
 	
 	
+//	protected List<String> getResourceFiles(String path, String extension) throws IOException {
+//	    filenames = new ArrayList<>();
+//	    try (
+//	            InputStream in = getResourceAsStream(path);
+//	            BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
+//	        String resource;
+//
+//	        while ((resource = br.readLine()) != null) {
+//	        	if(resource.toLowerCase().endsWith("." + extension.toLowerCase())) {
+//	        		filenames.add(resource);
+//	        	}
+//	        }
+//	    }
+//
+//	    return filenames;
+//	}
 	protected List<String> getResourceFiles(String path, String extension) throws IOException {
-	    filenames = new ArrayList<>();
-	    try (
-	            InputStream in = getResourceAsStream(path);
-	            BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
-	        String resource;
+	   
+	    try (Stream<Path> walk = Files.walk(Paths.get(path))) {
 
-	        while ((resource = br.readLine()) != null) {
-	        	if(resource.toLowerCase().endsWith("." + extension.toLowerCase())) {
-	        		filenames.add(resource);
-	        	}
-	        }
-	    }
+			filenames = walk.filter(Files::isRegularFile)
+					.map(x -> x.toString()).collect(Collectors.toList());
+			filenames = filenames.stream().filter(element -> element.toLowerCase().endsWith("." + extension.toLowerCase())).collect(Collectors.toList());
 
+			filenames.forEach(System.out::println);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	    return filenames;
 	}
+	
 	protected void printFileContent(String filename) {
 		
 	}

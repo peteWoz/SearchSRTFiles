@@ -1,5 +1,7 @@
 package Controller;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,20 +26,29 @@ public class SearchSingleFileForTerm {
 	}
 	
 	public List<LineFromAFile> readWholeFile(String filename) {
+		System.out.println("--> The file to load is: " + filename);
 	    ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-	    InputStream input = classLoader.getResourceAsStream(filename);
+	    //InputStream input = classLoader.getResourceAsStream(filename);
+	    InputStream input = null;
+		try {
+			input = new FileInputStream(filename);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		int val = 0;
 		lineNr = 0;
 		//Boolean termFound = false;
 		Scanner file = null;
 		//file = new Scanner(input, "utf-8");
+		System.out.println("The input to read is: " + input);
 		file = new Scanner(input);
 		String strLine="";
 		ArrayList<String> lines=new ArrayList<String>();
 		//Read File Line By Line
 		while (file.hasNextLine()){
 			strLine = file.nextLine();
-		    if (isEmpty(strLine)){
+		    if (isEmpty(strLine) && lines.size() >= 3){
 		       items.add(new LineFromAFile(filename, lines));
 		       lines= new ArrayList<String>();
 		    } else {

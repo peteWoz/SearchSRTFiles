@@ -99,7 +99,7 @@ public class SimpleSearchBox extends JPanel implements ActionListener {
 	        System.out.println("Filetype: " + fileType.getSelectedItem() + ". searchTerm: " + text);
 	        
 	        //call the controller and get info back in
-	        Main main = new Main();
+	        Main main = new Main("/");
 	        SearchResult searchResult;
 	        resultsForAllFiles = main.searchDirectory(text);
 	        for (String key : resultsForAllFiles.keySet()) {

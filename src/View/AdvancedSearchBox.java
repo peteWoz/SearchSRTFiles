@@ -1,10 +1,12 @@
 package View;
 
-/* TextDemo.java requires no other files. */
+/* AdvancedSearchBox.java requires no other files. */
+/* Last modified 27 Jan 2020 */
  
 import java.awt.*;
 import java.awt.event.*;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -20,13 +22,21 @@ import Controller.Main;
 import Demos.ListDemo;
 import Model.LineFromAFile;
 import Model.SearchResult;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+ 
+import static java.util.stream.Collectors.*;
+import static java.util.Map.Entry.*;
  
 public class AdvancedSearchBox extends JPanel implements ActionListener, ListSelectionListener {
-    protected JTextField textField;
-
+	
+    protected JTextField textField, selectedDir;
     private JLabel noOfFiles;
-    protected JPanel topPanel, searchResultsInfoPanel;
-    private JButton searchButton;
+    protected JPanel dirPanel, topPanel, searchResultsInfoPanel;
+    private JButton searchButton, openButton;
     private JComboBox fileType;
     private final static String newline = "\n";
     private String[] fileTypes = {"SRT"};
@@ -34,13 +44,36 @@ public class AdvancedSearchBox extends JPanel implements ActionListener, ListSel
     private JList list;
     private DefaultListModel<LineFromAFile> listModel;
     private JScrollPane scrollPane;
-    private HashMap<String, SearchResult> resultsForAllFiles;
+    private Map<String, SearchResult> resultsForAllFiles;
     private String tooltipText, searchTerm;
+    private JFileChooser fc;
+    private File sourceDir;
     // parameters to set are: no of lines before and after, location of the folder on the disk.
     // TODO Features: select local dir (absolute path + test if sub-folders are read too), generate Youtube link (assume SRT filename is the name of the video).
  
     public AdvancedSearchBox() {
         super(new GridBagLayout());
+        
+      //Create a file chooser
+        fc = new JFileChooser();
+
+        //Uncomment one of the following lines to try a different
+        //file selection mode.  The first allows just directories
+        //to be selected (and, at least in the Java look and feel,
+        //shown).  The second allows both files and directories
+        //to be selected.  If you leave these lines commented out,
+        //then the default mode (FILES_ONLY) will be used.
+        //
+        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        //fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+
+        //Create the open button.  We use the image from the JLF
+        //Graphics Repository (but we extracted it from the jar).
+        System.out.println("Working Directory = " + System.getProperty("user.dir"));
+
+        openButton = new JButton("Choose Directory");
+        openButton.addActionListener(this);
+        
         listModel = new DefaultListModel<>();
         list = new JList(listModel);
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -91,7 +124,11 @@ public class AdvancedSearchBox extends JPanel implements ActionListener, ListSel
         scrollPane = new JScrollPane(list);
         scrollPane.setPreferredSize(new Dimension(800, 600));
         
-
+        dirPanel = new JPanel();
+        selectedDir = new JTextField(40);
+        selectedDir.setEditable(false);
+        dirPanel.add(selectedDir);
+        dirPanel.add(openButton);
         
         topPanel = new JPanel();
         searchResultsInfoPanel = new JPanel();
@@ -115,6 +152,7 @@ public class AdvancedSearchBox extends JPanel implements ActionListener, ListSel
         topPanel.add(textField);
         topPanel.add(fileType);
         topPanel.add(searchButton);
+        add(dirPanel, c);
         add(topPanel, c);
         add(searchResultsInfoPanel, c);
         c.fill = GridBagConstraints.BOTH;
@@ -148,7 +186,19 @@ public class AdvancedSearchBox extends JPanel implements ActionListener, ListSel
     	listModel.clear();
     	int totalResults = 0;
     	int numberOfFilesWithResults = 0;
-    	if(evt.getSource() == searchButton || evt.getSource() == textField) {
+    	//Handle open button action.
+        if (evt.getSource() == openButton) {
+            int returnVal = fc.showOpenDialog(AdvancedSearchBox.this);
+
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                sourceDir = fc.getSelectedFile();
+                //This is where a real application would open the file.
+                System.out.println("Opening: " + sourceDir.getAbsolutePath() + "." + newline);
+                selectedDir.setText(sourceDir.getAbsolutePath());
+            } else {
+            	System.out.println("Open command cancelled by user." + newline);
+            }
+        }else if(evt.getSource() == searchButton || evt.getSource() == textField) {
     		tooltipText = "<html>";
     		//listModel.clear();
 	        searchTerm = textField.getText();
@@ -157,13 +207,22 @@ public class AdvancedSearchBox extends JPanel implements ActionListener, ListSel
 	        System.out.println("Filetype: " + fileType.getSelectedItem() + ". searchTerm: " + searchTerm);
 	        
 	        //call the controller and get info back in
-	        Main main = new Main();
+	        Main main = new Main(selectedDir.getText());
 	        SearchResult searchResult;
-	        resultsForAllFiles = main.searchDirectory(searchTerm);
+	        Map<String, SearchResult> temp = main.searchDirectory(searchTerm);
+	        resultsForAllFiles = temp
+	                .entrySet()
+	                .stream()
+	                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+	                .collect(
+	                    toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+	                        LinkedHashMap::new));
 	        for (String key : resultsForAllFiles.keySet()) {
 	        	searchResult = resultsForAllFiles.get(key);
 				System.out.println("Found " + searchResult.getResults().size() + " results in file " + searchResult.getFilename());
-				tooltipText = tooltipText + "Found " + searchResult.getResults().size() + " results in file " + searchResult.getFilename() + "<br>";
+				if(searchResult.getResults().size() > 0) {
+					tooltipText = tooltipText + "Found " + searchResult.getResults().size() + " results in file " + searchResult.getFilename() + "<br>";
+				}
 				//textArea.append("Found " + searchResult.getResults().size() + " results in file " + searchResult.getFilename() + newline);
 				//listModel.addElement("Found " + searchResult.getResults().size() + " results in file " + searchResult.getFilename());
 				for (LineFromAFile result : searchResult.getResults()) {

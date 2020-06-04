@@ -3,7 +3,7 @@ package Model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchResult {
+public class SearchResult implements Comparable<SearchResult>{
 
 	private String filename, searchTerm;
 	private List<LineFromAFile> fileLines, results;
@@ -70,6 +70,18 @@ public class SearchResult {
 
 	public SearchResult() {
 		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public int compareTo(SearchResult o) {
+		int result = 0;
+		if (results.size() > o.getResults().size()){
+			result = 1;
+		} else if(results.size() < o.getResults().size()) {
+			result = -1;
+		}
+		
+		return result;
 	}
 
 }
